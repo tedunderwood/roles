@@ -389,7 +389,7 @@ if __name__ == '__main__':
 
         if iteration % 5 == 0:
             for r in range(numtopics):
-                print_topicwords(twmatrix, r, vocabulary_list)
+                print_topicwords(twmatrix, r, vocabulary_list, 12)
             print()
 
             if iteration > 99 and iteration % 20 == 0:
