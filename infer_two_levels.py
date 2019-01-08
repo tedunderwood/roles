@@ -327,15 +327,15 @@ def print_topicwords(twmatrix, r, vocabulary_list, n):
     line = str(r) + ': ' + ' | '.join(topn) + "   " + str(np.sum(twmatrix[ : , r]))
     print(line)
 
-def shuffledivide(booklist, numprocesses):
+def shuffledivide(booklist, n):
     '''
     After each iteration, we reshuffle and divide the
-    list of Books.
+    list of Books into n (numprocesses) chunks.
     '''
 
     random.shuffle(booklist)
     
-    booksequences = [booklist[i::n] for i in range(numprocesses)]
+    booksequences = [booklist[i::n] for i in range(n)]
 
     # Note that this will not provide continuous chunks. Instead it will be
     # e.g., [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] ==>
