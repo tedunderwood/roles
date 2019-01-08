@@ -1,33 +1,18 @@
 # gibbs.py
 
 import numpy as np
-import random
-
-def weighted_choice_sub(weights):
-    ''' borrowed from Eli Bendersky'''
-
-    rnd = random.random() * sum(weights)
-    for i, w in enumerate(weights):
-        rnd -= w
-        if rnd < 0:
-            return i
 
 def onepass(quadruplet):
     booksequence, twmatrix, constants, theseed = quadruplet
 
     np.random.seed(theseed)
-    random.seed(theseed)
 
     oldmatrix = twmatrix.copy()
 
     numthemes, numtopics, alpha, beta = constants
 
-    topicroulette  = [int(x) for x in range(numtopics)]
-    zeroes  = 0
-    nonzeroes = 0
     same = 0
     different = 0
-    zeroprobs = []
 
     for book in booksequence:
 
@@ -70,14 +55,7 @@ def onepass(quadruplet):
                 probabilities = distribution / np.sum(distribution)
                 zeroprobs.append(probabilities[0])
 
-                assert len(probabilities) == numtopics
-
                 chosentopic = np.random.choice(numtopics, size = 1, p = probabilities)
-
-                if chosentopic == 0:
-                    zeroes += 1
-                else:
-                    nonzeroes += 1
 
                 if chosentopic == z:
                     same += 1
@@ -89,10 +67,5 @@ def onepass(quadruplet):
                 topicnormalizer[chosentopic] = topicnormalizer[chosentopic] + 1
 
     print(different / (same + 1))
-    if nonzeroes > 0:
-        zeropct = zeroes / nonzeroes
-    else:
-        zeropct = 1
 
-    print(np.mean(zeroprobs), zeropct)
     return twmatrix - oldmatrix, booksequence

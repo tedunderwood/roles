@@ -349,14 +349,13 @@ if __name__ == '__main__':
     numthemes = 50
     numroles = 50
     numtopics = numthemes + numroles
-    numwords = 20000
-    maxlines = 20000
+    numwords = 50000
+    maxlines = 100000
 
 
-    alphamean = 0.0005
+    alphamean = 0.001
     beta = 0.1
-    #alpha = np.array([alphamean] * numtopics)
-    alpha = alphamean
+    alpha = np.array([alphamean] * numtopics)
 
     constants = (numthemes, numtopics, alpha, beta)
 
@@ -367,7 +366,8 @@ if __name__ == '__main__':
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 12
+    numprocesses = 16
+    numiterations = 160
 
     # set this to a higher number for multiprocessing
 
@@ -378,10 +378,10 @@ if __name__ == '__main__':
         booksequences = shuffledivide(booklist, numprocesses)
         print("Sequences: ", len(booksequences))
 
-    for iteration in range(11):
+    for iteration in range(numiterations):
         print("ITERATION: " + str(iteration))
 
-        if iteration % 5 == 0:
+        if iteration % 20 == 0:
             for r in range(numtopics):
                 print_topicwords(twmatrix, r, vocabulary_list, 12)
             print()
@@ -400,11 +400,8 @@ if __name__ == '__main__':
 
                 constants = (numthemes, numtopics, alpha, beta)
 
-            if iteration == 300:
-                alphamean = alphamean / 2
-                beta = beta / 2
-
         if numprocesses > 1:
+
             quadruplets = []
             random_seeds = [(((i + 1) * (i + 1 + iteration)) % 199) for i in range(numprocesses)]
             print(random_seeds)
@@ -428,8 +425,15 @@ if __name__ == '__main__':
             for changematrix, bookseq in resultlist:
                 # twmatrix = twmatrix + changematrix
                 booklist.extend(bookseq)
-            twmatrix = recreate_matrix(booklist, twmatrix)
+                twmatrix = twmatrix + changematrix
+
             booksequences = shuffledivide(booklist, numprocesses)
+
+            if iteration % 50 == 1:
+                altmatrix = recreate_matrix(booklist, twmatrix)
+                assert altmatrix == twmatrix
+                # This should do nothing at all, if my math is working
+                # correctly. It's just a sanity check.
 
         else:
 
