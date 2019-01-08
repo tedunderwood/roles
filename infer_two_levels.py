@@ -403,7 +403,7 @@ if __name__ == '__main__':
         if numprocesses > 1:
 
             quadruplets = []
-            random_seeds = [(((i + 1) * (i + 1 + iteration)) % 199) for i in range(numprocesses)]
+            random_seeds = [(((i + 1) * (iteration + 1)) % 399) for i in range(numprocesses)]
             print(random_seeds)
             # create a different random state for each process
 
@@ -431,7 +431,7 @@ if __name__ == '__main__':
 
             if iteration % 50 == 1:
                 altmatrix = recreate_matrix(booklist, twmatrix)
-                assert altmatrix == twmatrix
+                assert np.array_equal(altmatrix, twmatrix)
                 # This should do nothing at all, if my math is working
                 # correctly. It's just a sanity check.
 
