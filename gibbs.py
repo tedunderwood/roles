@@ -53,7 +53,6 @@ def onepass(quadruplet):
 
                 distribution = (topicarray + alpha) * thiswordintopics
                 probabilities = distribution / np.sum(distribution)
-                zeroprobs.append(probabilities[0])
 
                 chosentopic = np.random.choice(numtopics, size = 1, p = probabilities)
 
