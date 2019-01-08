@@ -333,19 +333,13 @@ def shuffledivide(booklist, numprocesses):
     list of Books.
     '''
 
-    booksequences = []
-    numbooks = len(booklist)
     random.shuffle(booklist)
-    chunksize = (numbooks // numprocesses) + 1
-    thisseq = []
+    
+    booksequences = [booklist[i::n] for i in range(numprocesses)]
 
-    for book in booklist:
-        thisseq.append(book)
-        if len(thisseq) >= chunksize:
-            booksequences.append(thisseq)
-            thisseq = []
-
-    booksequences.append(thisseq)
+    # Note that this will not provide continuous chunks. Instead it will be
+    # e.g., [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] ==>
+    # [[0, 4, 8], [1, 5, 9], [2, 6, 10], [3, 7]]
 
     return booksequences
 
@@ -355,8 +349,8 @@ if __name__ == '__main__':
     numthemes = 20
     numroles = 20
     numtopics = numthemes + numroles
-    numwords = 15000
-    maxlines = 1000
+    numwords = 20000
+    maxlines = 20000
 
 
     alphamean = 0.0005
@@ -373,9 +367,9 @@ if __name__ == '__main__':
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 8
+    numprocesses = 4
 
-    # set this to a higher number for mutliprocessing
+    # set this to a higher number for multiprocessing
 
     if numprocesses > 1:
         booklist = []
@@ -384,7 +378,7 @@ if __name__ == '__main__':
         booksequences = shuffledivide(booklist, numprocesses)
         print("Sequences: ", len(booksequences))
 
-    for iteration in range(750):
+    for iteration in range(11):
         print("ITERATION: " + str(iteration))
 
         if iteration % 5 == 0:
