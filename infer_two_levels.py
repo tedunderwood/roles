@@ -366,7 +366,7 @@ if __name__ == '__main__':
 
     constants = (numthemes, numtopics, alpha, beta)
 
-    sourcepath = '/Users/tunder/data/malletficchars.txt'
+    sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
