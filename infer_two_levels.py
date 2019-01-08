@@ -346,8 +346,8 @@ def shuffledivide(booklist, numprocesses):
 
 if __name__ == '__main__':
 
-    numthemes = 20
-    numroles = 20
+    numthemes = 50
+    numroles = 50
     numtopics = numthemes + numroles
     numwords = 20000
     maxlines = 20000
@@ -367,7 +367,7 @@ if __name__ == '__main__':
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 4
+    numprocesses = 12
 
     # set this to a higher number for multiprocessing
 
