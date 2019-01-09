@@ -349,7 +349,7 @@ if __name__ == '__main__':
     numthemes = 60
     numroles = 120
     numtopics = numthemes + numroles
-    numwords = 60000
+    numwords = 50000
     maxlines = 300000
 
 
@@ -369,7 +369,7 @@ if __name__ == '__main__':
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 20
+    numprocesses = 16
     numiterations = 250
 
     if numprocesses > 1:
