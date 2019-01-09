@@ -11,7 +11,7 @@
 # across multiple instances of Gibbs sampling; that work
 # is done inside the module "gibbs."
 
-import random, csv
+import random, csv, pickle
 import gibbs
 import pandas as pd
 import numpy as np
@@ -347,13 +347,13 @@ def shuffledivide(booklist, n):
 if __name__ == '__main__':
 
     numthemes = 60
-    numroles = 120
+    numroles = 160
     numtopics = numthemes + numroles
-    numwords = 50000
+    numwords = 64000
     maxlines = 300000
 
 
-    alphamean = 0.0007
+    alphamean = 0.0003
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
@@ -362,7 +362,7 @@ if __name__ == '__main__':
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     sourcepath = 'tinyfic.txt'
-    modelname = 'firstresult'
+    modelname = 'secondresult'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
@@ -370,7 +370,7 @@ if __name__ == '__main__':
         numthemes, numroles, maxlines)
 
     numprocesses = 16
-    numiterations = 250
+    numiterations = 600
 
     if numprocesses > 1:
         booklist = []
@@ -491,6 +491,19 @@ if __name__ == '__main__':
             topn = [x[1] for x in decorated[0: 100]]
             line = str(r) + '\t' + str(np.sum(twmatrix[ : , r])) + '\t' + '\t'.join(topn) + '\n'
             f.write(line)
+
+    print()
+    print('Pickling state ...')
+
+    saveobject = dict()
+
+    saveobject['booklist'] = booklist
+    saveobject['constants'] = constants
+    saveobject['vocabulary_list'] = vocabulary_list
+
+    f = open(modelname + '.pickle', 'wb')
+    pickle.dump(saveobject, f)
+    f.close()
 
     print()
     print('Done.')
