@@ -11,7 +11,7 @@
 # across multiple instances of Gibbs sampling; that work
 # is done inside the module "gibbs."
 
-import random
+import random, csv
 import gibbs
 import pandas as pd
 import numpy as np
