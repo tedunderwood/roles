@@ -346,14 +346,14 @@ def shuffledivide(booklist, n):
 
 if __name__ == '__main__':
 
-    numthemes = 20
-    numroles = 40
+    numthemes = 60
+    numroles = 120
     numtopics = numthemes + numroles
-    numwords = 3000
-    maxlines = 4000
+    numwords = 60000
+    maxlines = 300000
 
 
-    alphamean = 0.0014
+    alphamean = 0.0007
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
@@ -362,15 +362,15 @@ if __name__ == '__main__':
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     sourcepath = 'tinyfic.txt'
-    modelname = 'firsttest'
+    modelname = 'firstresult'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 10
-    numiterations = 25
+    numprocesses = 20
+    numiterations = 250
 
     if numprocesses > 1:
         booklist = []
