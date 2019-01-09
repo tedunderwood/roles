@@ -82,7 +82,7 @@ class Character:
         possible role; its Book holds a numpy array summarizing the number of words
         in each possible theme.
 
-        The ordinality of a topic determines whether it is a role or theme. Topics 
+        The ordinality of a topic determines whether it is a role or theme. Topics
         up to "numthemes" are themes; beyond that they are interpreted as roles.
         '''
 
@@ -135,7 +135,7 @@ class Character:
 
 class Book:
     '''
-    See the documentation of the Character class, above, for general 
+    See the documentation of the Character class, above, for general
     notes on this data structure. Most importantly a Book object holds
     a list of characters, and summary statistics for book-level themes
     in all the characters that belong to it.
@@ -334,7 +334,7 @@ def shuffledivide(booklist, n):
     '''
 
     random.shuffle(booklist)
-    
+
     booksequences = [booklist[i::n] for i in range(n)]
 
     # Note that this will not provide continuous chunks. Instead it will be
@@ -346,30 +346,30 @@ def shuffledivide(booklist, n):
 
 if __name__ == '__main__':
 
-    numthemes = 50
-    numroles = 50
+    numthemes = 60
+    numroles = 120
     numtopics = numthemes + numroles
-    numwords = 50000
-    maxlines = 100000
+    numwords = 10000
+    maxlines = 8000
 
 
-    alphamean = 0.001
+    alphamean = 0.0007
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
     constants = (numthemes, numtopics, alpha, beta)
 
-    sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
+    # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
+
+    sourcepath = 'tinyfic.txt'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 16
-    numiterations = 160
-
-    # set this to a higher number for multiprocessing
+    numprocesses = 10
+    numiterations = 50
 
     if numprocesses > 1:
         booklist = []
@@ -383,22 +383,23 @@ if __name__ == '__main__':
 
         if iteration % 20 == 0:
             for r in range(numtopics):
-                print_topicwords(twmatrix, r, vocabulary_list, 12)
+                print_topicwords(twmatrix, r, vocabulary_list, 50)
             print()
 
-            if iteration > 99 and iteration % 20 == 0:
+            # Possibility to optimize alpha:
+            # if iteration > 99 and iteration % 20 == 0:
 
-                newalpha = np.sum(twmatrix, axis = 0)
-                newalpha = newalpha / np.mean(newalpha)
-                for idx in range(len(newalpha)):
-                    if newalpha[idx] > 2:
-                        newalpha[idx] = 2
-                    elif newalpha[idx] < 0.5:
-                        newalpha[idx] = 0.5
-                alpha = newalpha * alphamean
-                print(alpha)
+            #     newalpha = np.sum(twmatrix, axis = 0)
+            #     newalpha = newalpha / np.mean(newalpha)
+            #     for idx in range(len(newalpha)):
+            #         if newalpha[idx] > 2:
+            #             newalpha[idx] = 2
+            #         elif newalpha[idx] < 0.5:
+            #             newalpha[idx] = 0.5
+            #     alpha = newalpha * alphamean
+            #     print(alpha)
 
-                constants = (numthemes, numtopics, alpha, beta)
+            #     constants = (numthemes, numtopics, alpha, beta)
 
         if numprocesses > 1:
 
@@ -438,6 +439,42 @@ if __name__ == '__main__':
         else:
 
             onepass(allbooks, twmatrix, constants)
+
+    # We have completed all iterations
+
+    outfields = ['bookorchar', 'docid', 'fraction']
+    outfields.extend(["theme" + str(i) for i in range(0, numthemes)])
+    outfields.extend(["role" + str(i) for i in range(numthemes, numtopics)])
+
+    with open(modelname + "_doctopics.tsv", encoding = 'utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames = outfields, delimiter = '\t')
+        writer.writeheader()
+        for book in booklist:
+            charvectors = []
+            for char in book.characters:
+                vector = np.zeros(numtopics)
+                for assign in char.topicassigns:
+                    vector[assign] += 1
+                out = dict()
+                out['bookorchar'] = 'char'
+                out['docid'] = char.name
+                for i in range(numthemes):
+                    out['theme' + str(i)] = vector[i]
+                for i in range(numthemes, numtopics):
+                    out['role' + str(i)] = vector[i]
+                writer.writerow(out)
+                charvectors.append(vector)
+
+            bookvector = np.sum(charvectors, axis = 0)
+            out = dict()
+            out['bookorchar'] = 'book'
+            out['docid'] = book.name
+            for i in range(0, numthemes):
+                out['theme' + str(i)] = bookvector[i]
+            for i in range(numthemes, numtopics):
+                out['role' + str(i)] = bookvector[i]
+            writer.writerow(out)
+
 
 
 
