@@ -324,7 +324,7 @@ def print_topicwords(twmatrix, r, vocabulary_list, n):
     decorated = [x for x in zip(alltopiccounts, vocabulary_list)]
     decorated.sort(reverse = True)
     topn = [x[1] for x in decorated[0: n]]
-    line = str(r) + ': ' + ' | '.join(topn) + "   " + str(np.sum(twmatrix[ : , r]))
+    line = str(r) + ': ' + ' '.join(topn) + "   " + str(np.sum(twmatrix[ : , r]))
     print(line)
 
 def shuffledivide(booklist, n):
@@ -346,14 +346,14 @@ def shuffledivide(booklist, n):
 
 if __name__ == '__main__':
 
-    numthemes = 60
-    numroles = 120
+    numthemes = 20
+    numroles = 40
     numtopics = numthemes + numroles
-    numwords = 10000
-    maxlines = 8000
+    numwords = 3000
+    maxlines = 4000
 
 
-    alphamean = 0.0007
+    alphamean = 0.0014
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
@@ -370,7 +370,7 @@ if __name__ == '__main__':
         numthemes, numroles, maxlines)
 
     numprocesses = 10
-    numiterations = 50
+    numiterations = 25
 
     if numprocesses > 1:
         booklist = []
@@ -405,7 +405,9 @@ if __name__ == '__main__':
         if numprocesses > 1:
 
             quadruplets = []
-            random_seeds = [(((i + 1) * (iteration + 1)) % 399) for i in range(numprocesses)]
+            random_seeds = [((i + 1) * (iteration + 1)) for i in range(numprocesses)]
+            for i in range(numprocesses):
+                random_seeds[i] = (random_seeds[i] + random.choice([0, 100, 200, 300, 400])) % 499
             print(random_seeds)
             # create a different random state for each process
 
@@ -447,7 +449,9 @@ if __name__ == '__main__':
     outfields.extend(["theme" + str(i) for i in range(0, numthemes)])
     outfields.extend(["role" + str(i) for i in range(numthemes, numtopics)])
 
-    with open(modelname + "_doctopics.tsv", encoding = 'utf-8') as f:
+    print()
+    print('Writing doctopics ...')
+    with open(modelname + "_doctopics.tsv", mode = 'w', encoding = 'utf-8') as f:
         writer = csv.DictWriter(f, fieldnames = outfields, delimiter = '\t')
         writer.writeheader()
         for book in booklist:
@@ -475,6 +479,21 @@ if __name__ == '__main__':
             for i in range(numthemes, numtopics):
                 out['role' + str(i)] = bookvector[i]
             writer.writerow(out)
+
+    print()
+    print('Writing keys ...')
+    with open(modelname + '_keys.tsv', mode = 'w', encoding = 'utf-8') as f:
+        writer = csv.writer(f, delimiter = '\t')
+        for r in range(numtopics):
+            alltopiccounts = list(twmatrix[ : , r])
+            decorated = [x for x in zip(alltopiccounts, vocabulary_list)]
+            decorated.sort(reverse = True)
+            topn = [x[1] for x in decorated[0: 100]]
+            line = str(r) + '\t' + str(np.sum(twmatrix[ : , r])) + '\t' + '\t'.join(topn) + '\n'
+            f.write(line)
+
+    print()
+    print('Done.')
 
 
 
