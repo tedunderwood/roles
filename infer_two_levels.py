@@ -362,6 +362,7 @@ if __name__ == '__main__':
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     sourcepath = 'tinyfic.txt'
+    modelname = 'firsttest'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
