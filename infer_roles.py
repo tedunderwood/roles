@@ -380,7 +380,7 @@ if __name__ == '__main__':
     numthemes = 80
     numroles = 160
     numtopics = numthemes + numroles
-    numwords = 70000
+    numwords = 64000
     maxlines = 400000
 
 
@@ -443,7 +443,7 @@ if __name__ == '__main__':
             # create a different random state for each process
 
             for seq, seed in zip(booksequences, random_seeds):
-                matrixcopy = twmatrix.copy()
+                # matrixcopy = twmatrix.copy()
                 # deep copy, no data sharing!
                 # otherwise parallelism does bad things
                 quadruplets.append((seq, matrixcopy, constants, seed))
