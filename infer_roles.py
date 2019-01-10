@@ -11,7 +11,7 @@
 # across multiple instances of Gibbs sampling; that work
 # is done inside the module "gibbs."
 
-import random, csv, pickle
+import random, csv, pickle, math
 import gibbs
 import pandas as pd
 import numpy as np
