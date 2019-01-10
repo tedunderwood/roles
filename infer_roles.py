@@ -175,7 +175,7 @@ def load_characters(path, lexicon, numthemes, numroles, maxlines):
 
     numtopics = numthemes + numroles
 
-    twmatrix = np.zeros((len(lexicon), numtopics), dtype = 'int64')
+    twmatrix = np.zeros((len(lexicon), numtopics), dtype = 'int32')
 
     allbooks = dict()
 
@@ -235,7 +235,7 @@ def recreate_matrix(booklist, twmatrix):
     everything is working as we expect.
     '''
 
-    newmat = np.zeros(twmatrix.shape, dtype = 'int64')
+    newmat = np.zeros(twmatrix.shape, dtype = 'int32')
     for book in booklist:
         charactercount = 0
         for char in book.characters:
@@ -471,6 +471,7 @@ if __name__ == '__main__':
             if iteration % 50 == 1:
                 altmatrix = recreate_matrix(booklist, twmatrix)
                 assert np.array_equal(altmatrix, twmatrix)
+                print(twmatrix.dtype)
                 # This should do nothing at all, if my math is working
                 # correctly. It's just a sanity check.
 
