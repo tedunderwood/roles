@@ -380,7 +380,7 @@ if __name__ == '__main__':
     numthemes = 80
     numroles = 160
     numtopics = numthemes + numroles
-    numwords = 64000
+    numwords = 72000
     maxlines = 400000
 
 
@@ -446,7 +446,7 @@ if __name__ == '__main__':
                 # matrixcopy = twmatrix.copy()
                 # deep copy, no data sharing!
                 # otherwise parallelism does bad things
-                quadruplets.append((seq, matrixcopy, constants, seed))
+                quadruplets.append((seq, twmatrix, constants, seed))
 
             print('Multiprocessing ...')
             pool = Pool(processes = numprocesses)
