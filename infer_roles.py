@@ -356,7 +356,7 @@ def get_loglikelihood(booklist, twmatrix, numthemes):
 
     for book in booklist:
         
-        for character in book.characters:
+        for char in book.characters:
             for wordtype, assign in zip(char.wordtypes, char.topicassigns):
 
                 n += 1
