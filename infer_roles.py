@@ -343,7 +343,7 @@ def shuffledivide(booklist, n):
 
     return booksequences
 
-def get_loglikelihood(booklist, twmatrix, numthemes, numroles):
+def get_loglikelihood(booklist, twmatrix, numthemes):
     '''
     This calculates log-likelihood per token for documents in the model. 
     Note not as reliable as evaluation on held-out documents.
@@ -479,7 +479,7 @@ if __name__ == '__main__':
             onepass(allbooks, twmatrix, constants)
 
         if iteration % 10 == 1:
-            loglikelihood = get_loglikelihood(booklist, twmatrix)
+            loglikelihood = get_loglikelihood(booklist, twmatrix, numthemes)
             print("Log-likelihood per token: ", loglikelihood)
             print()
 
