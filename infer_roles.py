@@ -343,14 +343,45 @@ def shuffledivide(booklist, n):
 
     return booksequences
 
+def get_loglikelihood(booklist, twmatrix, numthemes, numroles):
+    '''
+    This calculates log-likelihood per token for documents in the model. 
+    Note not as reliable as evaluation on held-out documents.
+    '''
+    numdocs = len(booklist)
+
+    topictotals = np.sum(twmatrix, axis = 0)
+    logsum = 0
+    n = 0
+
+    for book in booklist:
+        
+        for character in book.characters:
+            for wordtype, assign in zip(char.wordtypes, char.topicassigns):
+
+                n += 1
+
+                if assign >= numthemes:
+                    rolenum = assign - numthemes
+                    roleinbookprob = char.rolecounts[rolenum] / char.numwords
+                    wordinroleprob = twmatrix[wordtype, assign] / topictotals[assign]
+                    likelihood = roleinbookprob * wordinroleprob
+                    logsum += math.log(likelihood)
+                else:
+                    themeinbookprob = book.themecounts[assign] / book.totalwords
+                    wordinthemeprob = twmatrix[wordtype, assign] / topictotals[assign]
+                    likelihood = themeinbookprob * wordinthemeprob
+                    logsum += math.log(likelihood)
+
+    return logsum / n
 
 if __name__ == '__main__':
 
-    numthemes = 60
-    numroles = 160
+    numthemes = 10
+    numroles = 20
     numtopics = numthemes + numroles
-    numwords = 64000
-    maxlines = 300000
+    numwords = 2000
+    maxlines = 3000
 
 
     alphamean = 0.0003
@@ -362,15 +393,15 @@ if __name__ == '__main__':
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     sourcepath = 'tinyfic.txt'
-    modelname = 'secondresult'
+    modelname = 'justatest'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 16
-    numiterations = 600
+    numprocesses = 4
+    numiterations = 15
 
     if numprocesses > 1:
         booklist = []
@@ -382,7 +413,7 @@ if __name__ == '__main__':
     for iteration in range(numiterations):
         print("ITERATION: " + str(iteration))
 
-        if iteration % 20 == 0:
+        if iteration % 50 == 10:
             for r in range(numtopics):
                 print_topicwords(twmatrix, r, vocabulary_list, 50)
             print()
@@ -426,10 +457,14 @@ if __name__ == '__main__':
             pool.join()
 
             booklist = []
-            for changematrix, bookseq in resultlist:
+            changeratios = []
+            for changematrix, bookseq, changeratio in resultlist:
                 # twmatrix = twmatrix + changematrix
                 booklist.extend(bookseq)
                 twmatrix = twmatrix + changematrix
+                changeratios.append(changeratio)
+
+            print('Ratio of changed to unchanged topic assignments: ', np.mean(changeratios))
 
             booksequences = shuffledivide(booklist, numprocesses)
 
@@ -442,6 +477,11 @@ if __name__ == '__main__':
         else:
 
             onepass(allbooks, twmatrix, constants)
+
+        if iteration % 10 == 1:
+            loglikelihood = get_loglikelihood(booklist, twmatrix)
+            print("Log-likelihood per token: ", loglikelihood)
+            print()
 
     # We have completed all iterations
 

@@ -65,6 +65,6 @@ def onepass(quadruplet):
                 twmatrix[w, chosentopic] = twmatrix[w, chosentopic] + 1
                 topicnormalizer[chosentopic] = topicnormalizer[chosentopic] + 1
 
-    print(different / (same + 1))
+    changeratio = (different + 1) / (same + 1)
 
-    return twmatrix - oldmatrix, booksequence
+    return twmatrix - oldmatrix, booksequence, changeratio
