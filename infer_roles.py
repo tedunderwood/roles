@@ -377,14 +377,14 @@ def get_loglikelihood(booklist, twmatrix, numthemes):
 
 if __name__ == '__main__':
 
-    numthemes = 10
-    numroles = 20
+    numthemes = 80
+    numroles = 160
     numtopics = numthemes + numroles
-    numwords = 2000
-    maxlines = 1000
+    numwords = 70000
+    maxlines = 400000
 
 
-    alphamean = 0.0003
+    alphamean = 0.0002
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
@@ -393,15 +393,15 @@ if __name__ == '__main__':
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
     sourcepath = 'tinyfic.txt'
-    modelname = 'justatest'
+    modelname = 'thirdresult'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 2
-    numiterations = 15
+    numprocesses = 16
+    numiterations = 450
 
     if numprocesses > 1:
         booklist = []
@@ -415,7 +415,7 @@ if __name__ == '__main__':
 
         if iteration % 50 == 10:
             for r in range(numtopics):
-                print_topicwords(twmatrix, r, vocabulary_list, 50)
+                print_topicwords(twmatrix, r, vocabulary_list, 16)
             print()
 
             # Possibility to optimize alpha:
