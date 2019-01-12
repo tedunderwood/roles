@@ -345,7 +345,7 @@ def shuffledivide(booklist, n):
 
 def get_loglikelihood(booklist, twmatrix, numthemes):
     '''
-    This calculates log-likelihood per token for documents in the model. 
+    This calculates log-likelihood per token for documents in the model.
     Note not as reliable as evaluation on held-out documents.
     '''
     numdocs = len(booklist)
@@ -355,7 +355,7 @@ def get_loglikelihood(booklist, twmatrix, numthemes):
     n = 0
 
     for book in booklist:
-        
+
         for char in book.characters:
             for wordtype, assign in zip(char.wordtypes, char.topicassigns):
 
@@ -377,14 +377,14 @@ def get_loglikelihood(booklist, twmatrix, numthemes):
 
 if __name__ == '__main__':
 
-    numthemes = 80
+    numthemes = 60
     numroles = 160
     numtopics = numthemes + numroles
-    numwords = 72000
-    maxlines = 400000
+    numwords = 80000
+    maxlines = 500000
 
 
-    alphamean = 0.0002
+    alphamean = 0.0003
     beta = 0.1
     alpha = np.array([alphamean] * numtopics)
 
@@ -392,16 +392,16 @@ if __name__ == '__main__':
 
     # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
 
-    sourcepath = 'tinyfic.txt'
-    modelname = 'thirdresult'
+    sourcepath = 'bestfic.txt'
+    modelname = 'fourthresult'
 
     vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
 
     allbooks, twmatrix = load_characters(sourcepath, lexicon,
         numthemes, numroles, maxlines)
 
-    numprocesses = 16
-    numiterations = 450
+    numprocesses = 18
+    numiterations = 400
 
     if numprocesses > 1:
         booklist = []
