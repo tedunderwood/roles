@@ -14,6 +14,8 @@ def onepass(quadruplet):
     same = 0
     different = 0
 
+    topicnormalizer = np.sum(twmatrix, axis = 0, dtype = 'int64')
+
     for book in booksequence:
 
         for char in book.characters:
@@ -72,5 +74,6 @@ def onepass(quadruplet):
                 # int16 matrix.
 
     changeratio = (different + 1) / (same + 1)
+    del twmatrix, topicnormalizer
 
     return changematrix, booksequence, changeratio
