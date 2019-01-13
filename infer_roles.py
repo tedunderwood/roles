@@ -11,7 +11,7 @@
 # across multiple instances of Gibbs sampling; that work
 # is done inside the module "gibbs."
 
-import random, csv, pickle, math
+import random, csv, pickle, math, sys
 import gibbs
 import pandas as pd
 import numpy as np
@@ -223,19 +223,17 @@ def load_characters(path, lexicon, numthemes, numroles, maxlines):
 
     return allbooks, twmatrix
 
-def recreate_matrix(booklist, twmatrix):
+def recreate_matrix(booklist, numwords, numtopics):
 
     '''
     This function is mostly a failsafe to ensure that
     the topic-word matrix has been updated in a way that
     matches the topic assignments in Books and Characters.
 
-    It doesn't run after every iteration of sampling, but
-    does run on the fiftieth iteration, just to check that
-    everything is working as we expect.
+    It can also be used when reloading a model.
     '''
 
-    newmat = np.zeros(twmatrix.shape, dtype = 'int32')
+    newmat = np.zeros((numwords, numtopics), dtype = 'int32')
     for book in booklist:
         charactercount = 0
         for char in book.characters:
@@ -246,7 +244,6 @@ def recreate_matrix(booklist, twmatrix):
                 newmat[w, z] += 1
         assert book.totalwords ==  charactercount
 
-    assert np.sum(twmatrix) == np.sum(newmat)
     return newmat
 
 
@@ -375,38 +372,99 @@ def get_loglikelihood(booklist, twmatrix, numthemes):
 
     return logsum / n
 
+def load_model(modelpath):
+    f = open(modelpath, 'rb')
+    savedmodel = pickle.load(f)
+    f.close()
+
+    booklist = savedmodel['booklist']
+    constants = savedmodel['constants']
+    vocabulary_list = savedmodel['vocabulary_list']
+    numtopics = constants[1]
+    numwords = len(vocabulary_list)
+    twmatrix = recreate_matrix(booklist, numwords, numtopics)
+
+    return booklist, constants, vocabulary_list, twmatrix
+
 if __name__ == '__main__':
 
-    numthemes = 60
-    numroles = 160
-    numtopics = numthemes + numroles
-    numwords = 80000
-    maxlines = 500000
+    # There are several ways to run this script. You can pass in command-line
+    # arguments that specify a file to load and a set of parameters to use,
+    # or you can specify a path to a saved model.
 
+    args = sys.argv
 
-    alphamean = 0.0003
-    beta = 0.1
-    alpha = np.array([alphamean] * numtopics)
+    # some default settings
 
-    constants = (numthemes, numtopics, alpha, beta)
-
-    # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
-
-    sourcepath = 'bestfic.txt'
-    modelname = 'fourthresult'
-
-    vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
-
-    allbooks, twmatrix = load_characters(sourcepath, lexicon,
-        numthemes, numroles, maxlines)
-
+    savedmodel = False
     numprocesses = 18
     numiterations = 300
+    modelname = 'noneyet'
+    maxlines = 500000
 
-    if numprocesses > 1:
+    for odd in range(1, len(args), 2):
+        even = odd + 1
+        if args[odd] == '-themes':
+            numthemes = int(args[even])
+
+        elif args[odd] == '-roles':
+            numroles = int(args[even])
+
+        elif args[odd] == '-words':
+            numwords = int(args[even])
+
+        elif args[odd] == '-alpha':
+            alphamean = float(args[even])
+
+        elif args[odd] == '-source':
+            sourcepath = args[even]
+
+        elif args[odd] == '-name':
+            modelname = args[even]
+
+        elif args[odd] == '-iterations':
+            numiterations = int(args[even])
+
+        elif args[odd] == '-numprocesses':
+            numprocesses = int(args[even])
+
+        elif args[odd] == '-maxlines':
+            maxlines = int(args[even])
+
+        elif args[odd] == '-savedmodel':
+            modelpath = args[even]
+            savedmodel = True
+
+        else:
+            print("I don't recognize the option " + args[odd])
+
+    if savedmodel:
+        booklist, constants, vocabulary_list, twmatrix = load_model(modelpath)
+        numthemes = constants[0]
+        numtopics = constants[1]
+        alpha = constants[2]
+        beta = constants[3]
+        modelname = modelpath.replace('.pickle', '_II')
+
+    else:
+        numtopics = numthemes + numroles
+        beta = 0.1
+        alpha = np.array([alphamean] * numtopics)
+
+        constants = (numthemes, numtopics, alpha, beta)
+
+        # sourcepath = '../biographies/topicmodel/data/malletficchars.txt'
+
+        vocabulary_list, lexicon = get_vocab(sourcepath,numwords, maxlines)
+
+        allbooks, twmatrix = load_characters(sourcepath, lexicon,
+            numthemes, numroles, maxlines)
+
         booklist = []
         for bookname, book in allbooks.items():
             booklist.append(book)
+
+    if numprocesses > 1:
         booksequences = shuffledivide(booklist, numprocesses)
         print("Sequences: ", len(booksequences))
 
