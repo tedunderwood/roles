@@ -89,8 +89,17 @@ class Character:
         self.name = charname
         self.numwords = len(wordseq)
         self.wordtypes = np.zeros(self.numwords, dtype = 'int32')
-        self.topicassigns = np.zeros(self.numwords, dtype = 'int16')
-        self.rolecounts = np.zeros(numroles, dtype = 'int16')
+
+        if numtopics < 251:
+            self.topicassigns = np.zeros(self.numwords, dtype = 'uint8')
+        else:
+            self.topicassigns = np.zeros(self.numwords, dtype = 'int16')
+
+        if self.numwords < 251:
+            self.rolecounts = np.zeros(numroles, dtype = 'uint8')
+        else:
+            self.rolecounts = np.zeros(numroles, dtype = 'int16')
+
         self.book = book
         self.numthemes = numthemes
 
@@ -386,6 +395,28 @@ def load_model(modelpath):
 
     return booklist, constants, vocabulary_list, twmatrix
 
+def get_size(obj, seen=None):
+    """Recursively finds size of objects"""
+    # from https://goshippo.com/blog/measure-real-size-any-python-object/
+
+    size = sys.getsizeof(obj)
+    if seen is None:
+        seen = set()
+    obj_id = id(obj)
+    if obj_id in seen:
+        return 0
+    # Important mark as seen *before* entering recursion to gracefully handle
+    # self-referential objects
+    seen.add(obj_id)
+    if isinstance(obj, dict):
+        size += sum([get_size(v, seen) for v in obj.values()])
+        size += sum([get_size(k, seen) for k in obj.keys()])
+    elif hasattr(obj, '__dict__'):
+        size += get_size(obj.__dict__, seen)
+    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
+        size += sum([get_size(i, seen) for i in obj])
+    return size
+
 if __name__ == '__main__':
 
     # There are several ways to run this script. You can pass in command-line
@@ -608,6 +639,9 @@ if __name__ == '__main__':
     print('Done.')
     print()
     print('The maximum value in the twmatrix is ' + str(np.max(twmatrix)) + '.')
+    print('The booklist size is: ', get_size(booklist))
+    print('The twmatrix size is: ', get_size(twmatrix))
+
 
 
 
