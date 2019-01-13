@@ -9,5 +9,15 @@ Jan 10, 2019
 ------------
 Successful results from **firstresult.** Base accuracy 76.6%; higher if document centroids are subtracted.
 
-Model **thirdresult** was run on tinyfic.txt using 80 themes and 160 roles. Vocabulary was 70000 woerds. Alpha was set to .0002 and was not optimized; beta 0.1. 450 iterations.
+Model **thirdresult** was run on tinyfic.txt using 80 themes and 160 roles. Vocabulary was 70000 words. Alpha was set to .0002 and was not optimized; beta 0.1. 450 iterations.
 
+Jan 13, 2019
+------------
+
+**fourthresult**
+python3 infer_roles.py -source bestfic.txt -iterations 200 -roles 150 -themes 50 -words 72000 -alpha .0004 -name fourthmodel -numprocesses 18 -maxlines 500000
+
+Switched the source to bestfic. 150 roles and 50 themes for a 3/1 ratio. Alpha slightly higher.
+
+**fifthresult** 
+We'll keep a 3-1 ratio but reduce the overall number of topics. 120 roles and 40 themes. Increase vocabulary to 75000 and see if we can keep that constant in the future.
