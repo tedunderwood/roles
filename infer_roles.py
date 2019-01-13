@@ -606,6 +606,8 @@ if __name__ == '__main__':
 
     print()
     print('Done.')
+    print()
+    print('The maximum value in the twmatrix is ' + str(np.max(twmatrix)) + '.')
 
 
 

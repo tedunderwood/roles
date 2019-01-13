@@ -7,7 +7,7 @@ def onepass(quadruplet):
 
     np.random.seed(theseed)
 
-    oldmatrix = twmatrix.copy()
+    changematrix = np.zeros(twmatrix.shape, dtype = 'int16')
 
     numthemes, numtopics, alpha, beta = constants
 
@@ -15,10 +15,6 @@ def onepass(quadruplet):
     different = 0
 
     for book in booksequence:
-
-        topicnormalizer = np.sum(twmatrix, axis = 0)
-        # I should technically update this after each iteration
-        # but that seems likely to slow things
 
         for char in book.characters:
 
@@ -65,6 +61,16 @@ def onepass(quadruplet):
                 twmatrix[w, chosentopic] = twmatrix[w, chosentopic] + 1
                 topicnormalizer[chosentopic] = topicnormalizer[chosentopic] + 1
 
+                changematrix[w, z] = changematrix[w, z] - 1
+                changematrix[w, chosentopic] = changematrix[w, chosentopic] + 1
+
+                # Note: I used to record changes by keeping a copy of the twmatrix, and
+                # subtracting the old and new matrices at the end of the this module.
+                # Arguably more efficient computation-wise but it ate memory, since
+                # it required two copies of an int32 matrix, and produced a third one
+                # by subtraction at the end. This requires only one int32 and one
+                # int16 matrix.
+
     changeratio = (different + 1) / (same + 1)
 
-    return twmatrix - oldmatrix, booksequence, changeratio
+    return changematrix, booksequence, changeratio
