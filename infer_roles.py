@@ -401,7 +401,7 @@ if __name__ == '__main__':
         numthemes, numroles, maxlines)
 
     numprocesses = 18
-    numiterations = 400
+    numiterations = 300
 
     if numprocesses > 1:
         booklist = []
@@ -468,10 +468,10 @@ if __name__ == '__main__':
 
             booksequences = shuffledivide(booklist, numprocesses)
 
-            if iteration % 50 == 1:
-                altmatrix = recreate_matrix(booklist, twmatrix)
-                assert np.array_equal(altmatrix, twmatrix)
-                print(twmatrix.dtype)
+            # if iteration % 100 == 1:
+            #     altmatrix = recreate_matrix(booklist, twmatrix)
+            #     assert np.array_equal(altmatrix, twmatrix)
+            #     print(twmatrix.dtype)
                 # This should do nothing at all, if my math is working
                 # correctly. It's just a sanity check.
 
@@ -479,7 +479,7 @@ if __name__ == '__main__':
 
             onepass(allbooks, twmatrix, constants)
 
-        if iteration % 10 == 1:
+        if iteration % 20 == 1:
             loglikelihood = get_loglikelihood(booklist, twmatrix, numthemes)
             print("Log-likelihood per token: ", loglikelihood)
             print()
