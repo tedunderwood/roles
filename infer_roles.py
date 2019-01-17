@@ -479,6 +479,7 @@ if __name__ == '__main__':
             modelname = modelpath.replace('.pickle', 'II')
         else:
             modelname = modelpath.replace('II.pickle', 'III')
+        print("Model name: " + modelname)
 
     else:
         numtopics = numthemes + numroles
