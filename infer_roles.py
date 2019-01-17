@@ -475,7 +475,10 @@ if __name__ == '__main__':
         numtopics = constants[1]
         alpha = constants[2]
         beta = constants[3]
-        modelname = modelpath.replace('.pickle', '_II')
+        if 'II' not in modelpath:
+            modelname = modelpath.replace('.pickle', 'II')
+        else:
+            modelname = modelpath.replace('II.pickle', 'III')
 
     else:
         numtopics = numthemes + numroles
