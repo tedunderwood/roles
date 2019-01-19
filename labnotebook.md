@@ -15,13 +15,17 @@ Jan 13, 2019
 ------------
 
 **fourthresult**
-python3 infer_roles.py -source bestfic.txt -iterations 200 -roles 150 -themes 50 -words 72000 -alpha .0004 -name fourthmodel -numprocesses 18 -maxlines 500000
+
+    python3 infer_roles.py -source bestfic.txt -iterations 200 -roles 150 -themes 50 -words 72000 -alpha .0004 -name fourthmodel -numprocesses 18 -maxlines 500000
 
 Switched the source to bestfic. 150 roles and 50 themes for a 3/1 ratio. Alpha slightly higher.
 
 **fifthresult**
 We'll keep a 3-1 ratio but reduce the overall number of topics. 120 roles and 40 themes. Stick with 72000 words and see if we can keep that constant in the future.
 
+    python3 infer_roles.py -source bestfic.txt -iterations 250 -roles 120 -themes 40 -words 72000 -alpha .0005 -name fifthmodel -numprocesses 18 -maxlines 500000
+
 **sixthresult**
 Keep a 3-1 ratio and increase overall number of topics. 180 roles and 60 themes.
-python3 infer_roles.py -source bestfic.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name sixthmodel -numprocesses 18 -maxlines 500000
+
+    python3 infer_roles.py -source bestfic.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name sixthmodel -numprocesses 18 -maxlines 500000
