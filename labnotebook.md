@@ -29,3 +29,8 @@ We'll keep a 3-1 ratio but reduce the overall number of topics. 120 roles and 40
 Keep a 3-1 ratio and increase overall number of topics. 180 roles and 60 themes.
 
     python3 infer_roles.py -source bestfic.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name sixthmodel -numprocesses 18 -maxlines 500000
+
+**seventhresult**
+Try a 2-1 ratio with 60 themes. Also use an alpha setting like the one used in **secondresult,** but apply to bestfic.txt.
+
+    python3 infer_roles.py -source bestfic.txt -iterations 300 -roles 120 -themes 60 -words 72000 -alpha .0003 -name seventhmodel -numprocesses 18 -maxlines 500000
