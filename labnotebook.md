@@ -34,3 +34,16 @@ Keep a 3-1 ratio and increase overall number of topics. 180 roles and 60 themes.
 Try a 2-1 ratio with 60 themes. Also use an alpha setting like the one used in **secondresult,** but apply to bestfic.txt.
 
     python3 infer_roles.py -source bestfic.txt -iterations 300 -roles 120 -themes 60 -words 72000 -alpha .0003 -name seventhmodel -numprocesses 18 -maxlines 500000
+
+January 26, 2019
+----------------
+
+**bioficA**
+Using the settings for **sixthresult** (which seem to be the best so far), but applying them to a dataset that combines roughly equal amounts of biography and fiction.
+
+    python3 infer_roles.py -source bestbiofic.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name bioficA -numprocesses 15 -maxlines 800000
+
+**bioA**
+Using the settings for **sixthresult**, but applying them to a dataset of biography alone (plus a tiny amount of fiction needed to test hypotheses).
+
+    python3 infer_roles.py -source bestbio.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name bioA -numprocesses 15 -maxlines 1100000
