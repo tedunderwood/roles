@@ -47,3 +47,11 @@ Using the settings for **sixthresult** (which seem to be the best so far), but a
 Using the settings for **sixthresult**, but applying them to a dataset of biography alone (plus a tiny amount of fiction needed to test hypotheses).
 
     python3 infer_roles.py -source bestbio.txt -iterations 250 -roles 180 -themes 60 -words 72000 -alpha .0005 -name bioA -numprocesses 15 -maxlines 1100000
+
+March 21, 2019
+--------------
+
+**eighthmodel**
+Might as well be called nullmodel. Basically a way of running infer_roles as if it were generic LDA, with no themes and just character-level roles.
+
+    python3 infer_roles.py -source bestfic.txt -iterations 250 -roles 240 -themes 0 -words 72000 -alpha .0005 -name eighthmodel -numprocesses 18 -maxlines 500000
